@@ -1,14 +1,16 @@
 # Using this skill across assistants
 
-This package is ordinary UTF-8 Markdown with a small YAML header. It has no
-vendor-specific tools, secret values, package installation or executable payloads.
+The skill is ordinary UTF-8 Markdown with a small YAML header, plus a vendored
+copy of Anthropic's MIT-licensed /security-review command. It has no secret
+values or package installation. The optional scripts/ and .github/ files keep
+that copy current in this repository; following the skill does not require them.
 
 For a host that supports SKILL.md folders, install the entire adaptive-security
 folder in that host's documented skill location. Host formats differ: confirm
 its current documentation rather than assuming all hosts use Codex paths.
 
-For a host without skill support, attach SKILL.md and all reference files
-to its project knowledge or conversation. Ask it to follow them for the authorized
+For a host without skill support, attach SKILL.md and all reference files,
+including references/upstream/, to its project knowledge or conversation. Ask it to follow them for the authorized
 project. If it cannot read attachments, paste the contents into project instructions
 as space permits, keeping the backup, scope, verification and evidence constraints.
 

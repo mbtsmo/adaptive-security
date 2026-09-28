@@ -20,10 +20,12 @@ Default planning intervals: daily checks; weekly release and coverage review;
 monthly deeper testing; quarterly infrastructure and recovery review; annual
 independent-assessment review. Owners configure timezone, scope and execution.
 
-Public Anthropic security-review methods inform the code review workflow. Pinned
-sources, attribution and deliberate scope adaptations are documented in
+Change review runs Anthropic's `/security-review`: the Claude Code built-in where
+it is available, otherwise a verbatim, MIT-licensed copy vendored in
+[references/upstream/](references/upstream/). Precedence rules, attribution and
+deliberate scope adaptations are documented in
 [SECURITY-REVIEW.md](references/SECURITY-REVIEW.md). No Anthropic account or paid
-API is required for these instructions. This project is not affiliated with or
+API is required for the vendored path. This project is not affiliated with or
 endorsed by Anthropic, OpenAI or the referenced standards organizations.
 
 ## Use it
@@ -45,10 +47,29 @@ RUNNER-ASSURANCE.md and SECURITY-REVIEW.md in an isolated disposable project.
 Behaviour varies by model and host; this package has not been validated across
 all assistants. Missing tools or access must be reported, never treated as passes.
 
+## Keeping up with Anthropic's /security-review
+
+Anthropic can change `/security-review` in its public repository or in the copy
+bundled with Claude Code, and the two already differ.
+[upstream-security-review.yml](.github/workflows/upstream-security-review.yml)
+runs [scripts/upstream_sync.py](scripts/upstream_sync.py) daily and proposes
+any change as the `upstream-sync/security-review` pull request, for review under
+*Upstream tracking* in SECURITY-REVIEW.md. Failures open an issue. Claude Code
+is proprietary, so only a hash of its bundled prompt is stored here.
+
+To let the workflow open pull requests, enable **Settings → Actions → General →
+Workflow permissions → Allow GitHub Actions to create and approve pull requests**
+(off by default for repositories in a personal account; turn it off again to
+undo). Without it, the workflow opens an issue that links the proposed branch.
+GitHub disables scheduled workflows in public repositories after 60 days without
+repository activity; re-enable it from the Actions tab. To check by hand, run
+`python3 scripts/upstream_sync.py check`.
+
 ## Sharing and data handling
 
-The distributed package contains guidance only: no site source, environment
-files, credentials, customer data, backups or private findings. Store project
+The distributed package contains guidance plus its upstream-tracking script and
+workflows: no site source, environment files, credentials, customer data, backups
+or private findings. Store project
 configuration, raw evidence and backups separately. Review your own changes before
 redistribution; keep sensitive information out of public issues and commits.
 
@@ -59,5 +80,7 @@ every vulnerability or undisclosed zero-day, or replace an independent assessmen
 ## License
 
 Original package content is provided under the [MIT License](LICENSE).
-Linked third-party projects retain their own licenses; their software and full
-skill prompts are not bundled here.
+Anthropic's `security-review.md` is included verbatim under its own
+[MIT License](references/upstream/claude-code-security-review/LICENSE)
+(Copyright (c) 2025 Anthropic). Other linked third-party projects retain their
+own licenses; their software and full skill prompts are not bundled here.

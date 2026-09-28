@@ -17,12 +17,15 @@ embed credentials or site-specific infrastructure IDs into the reusable skill.
 - Required release gates and rollback authorization:
 - Evidence/Git paths, repository ownership and notification preferences:
 - Last source refresh and next prioritized coverage improvement:
+- Upstream /security-review sync health and last reviewed versions:
 
 ## Run record
 
 - UTC run ID, local reporting time, trigger, start/final commit IDs in runner state.
 - Status: in progress / complete within stated scope / partial / failed / blocked.
 - Tested commit/artifact hash and initial dirty/staged work; preserve unrelated work.
+- /security-review pass: variant (Claude Code version or vendored commit), base,
+  diff range, report reference and retained lower-confidence leads.
 - Each check: cadence layer, exact scope, tool/source version, retrieved timestamp,
   actual result, sanitized evidence reference, and coverage limitation.
 - Threats: identifiers, package/version or component, exposure by environment,
