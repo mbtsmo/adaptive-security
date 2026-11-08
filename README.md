@@ -28,7 +28,27 @@ deliberate scope adaptations are documented in
 API is required for the vendored path. This project is not affiliated with or
 endorsed by Anthropic, OpenAI or the referenced standards organizations.
 
-## Use it
+## Install in Claude Code
+
+This repository is also a Claude Code plugin marketplace. Install it once and
+updates arrive as new commits land on `main`:
+
+    /plugin install adaptive-security --marketplace mbtsmo/adaptive-security
+
+On Claude Code before 2.1.275, run `/plugin marketplace add mbtsmo/adaptive-security`
+and then `/plugin install adaptive-security@adaptive-security`. Third-party
+marketplaces do not auto-update by default: open `/plugin`, choose
+**Marketplaces → adaptive-security**, and enable auto-update. The skill is then
+available as `/adaptive-security:adaptive-security` in every project.
+
+Cloud sessions on claude.ai/code do not load your local plugins. Add these
+lines to the cloud environment's **Setup script** so each new session installs
+the current version:
+
+    claude plugin marketplace add mbtsmo/adaptive-security || claude plugin marketplace update adaptive-security
+    claude plugin install adaptive-security@adaptive-security --scope user
+
+## Use it in other assistants
 
 1. Download this repository using GitHub's **Code → Download ZIP**, or clone it.
 2. Place the folder containing `SKILL.md` and `references/` in your assistant's
