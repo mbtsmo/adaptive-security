@@ -42,11 +42,14 @@ marketplaces do not auto-update by default: open `/plugin`, choose
 available as `/adaptive-security:adaptive-security` in every project.
 
 Cloud sessions on claude.ai/code do not load your local plugins. Add these
-lines to the cloud environment's **Setup script** so each new session installs
-the current version:
+lines to the cloud environment's **Setup script** so new sessions install the
+current version. Each line is safe to rerun, and the updates matter when the
+environment is reused:
 
-    claude plugin marketplace add mbtsmo/adaptive-security || claude plugin marketplace update adaptive-security
+    claude plugin marketplace add mbtsmo/adaptive-security
+    claude plugin marketplace update adaptive-security
     claude plugin install adaptive-security@adaptive-security --scope user
+    claude plugin update adaptive-security@adaptive-security --scope user
 
 ## Use it in other assistants
 
