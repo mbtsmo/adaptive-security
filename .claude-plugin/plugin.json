@@ -1,0 +1,8 @@
+{
+  "name": "adaptive-security",
+  "description": "Backup-first security review, recurring checks and verified remediation for authorized websites and applications. Runs Anthropic's /security-review and tracks its updates.",
+  "author": { "name": "mbtsmo" },
+  "repository": "https://github.com/mbtsmo/adaptive-security",
+  "license": "MIT",
+  "skills": "./"
+}
