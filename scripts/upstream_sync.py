@@ -102,15 +102,19 @@ def git(cwd, *args):
 
 
 _PLACEHOLDER = re.compile(r"\$\{[A-Za-z_$][\w$]*\}")
+# From Claude Code 2.1.329 the closing sentence is a separate minified constant
+# appended at run time: the template literal ends, then `,name="<END>`.
+_SPLIT_END = re.compile(r"`\s*,\s*[A-Za-z_$][\w$]*\s*=\s*\"(?=" + re.escape(END) + ")")
 
 
 def normalize_body(text):
     """Normalize a command body so bundled and published copies compare equal.
 
-    Undoes JavaScript template-literal escaping, replaces minified ${name}
-    interpolations (whose names change between builds) with ${}, and strips
-    trailing whitespace from each line.
+    Rejoins a closing sentence stored as its own constant, undoes JavaScript
+    template-literal escaping, replaces minified ${name} interpolations (whose
+    names change between builds) with ${}, and strips trailing whitespace.
     """
+    text = _SPLIT_END.sub("", text)
     text = text.replace("\r\n", "\n").replace("\\`", "`").replace("\\$", "$")
     text = _PLACEHOLDER.sub("${}", text)
     return "\n".join(line.rstrip() for line in text.split("\n"))

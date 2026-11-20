@@ -22,6 +22,11 @@ class NormalizeAndExtract(unittest.TestCase):
         bundled = f"{u.START}\n\\`git status\\` ${{_1o}}  \r\n{u.END}"
         self.assertEqual(u.normalize_body(bundled), f"{u.START}\n`git status` ${{}}\n{u.END}")
 
+    def test_closing_sentence_split_into_its_own_constant_rejoins(self):
+        split = BODY.replace(u.END, "`,wOs=\"" + u.END)
+        self.assertEqual(u.normalize_body(split), u.normalize_body(BODY))
+        self.assertEqual(u.extract_single_body(split.encode(), "t"), u.normalize_body(BODY))
+
     def test_single_body_found_in_binary_noise(self):
         data = b"\x00\xff" + BODY.encode() + b"\x00junk"
         self.assertEqual(u.extract_single_body(data, "t"), u.normalize_body(BODY))
