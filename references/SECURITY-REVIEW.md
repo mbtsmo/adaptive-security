@@ -15,7 +15,9 @@ comparison base is established (Change review). Choose the variant:
   current version and needs no sync from this repository. Run it in a separate
   sub-agent or task where the host allows, because its final instruction makes
   the report the entire reply; it must end that sub-task, not this programme's
-  run. Record the Claude Code version.
+  run. Run directly, some hosts append closing lines after the report; do not
+  post findings anywhere unless posting was explicitly authorized. Record the
+  Claude Code version.
 - **Vendored copy.** Otherwise follow
   references/upstream/claude-code-security-review/security-review.md as written:
   objective, categories, three analysis phases, output format, severity and

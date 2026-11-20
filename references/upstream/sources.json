@@ -21,8 +21,9 @@
       "matches_public": false,
       "retrieved": "2026-09-28",
       "known_differences_from_public": [
-        "Observed in Claude Code 2.1.283 and 2.1.284. The DIFF CONTENT step reviews committed changes since the merge base with origin/HEAD only (three-dot diff); the public copy's --merge-base form also includes uncommitted working-tree changes.",
-        "Outside the hashed body: allowed-tools also grants PowerShell forms of the same read-only git commands, and the command refuses to run outside a git repository."
+        "Observed in Claude Code 2.1.283 through 2.1.329. The DIFF CONTENT step reviews committed changes since the merge base with origin/HEAD only (three-dot diff); the public copy's --merge-base form also includes uncommitted working-tree changes.",
+        "Outside the hashed body: allowed-tools also grants PowerShell forms of the same read-only git commands, and the command refuses to run outside a git repository.",
+        "From 2.1.329 the closing sentence is chosen at run time (outside the hashed body): as a sub-agent, skill preload or scheduled run it is the published sentence; run directly, some hosts replace it with one asking for two extra host-supplied lines after the report (the binary nearby references a GitHub review-comment endpoint)."
       ]
     }
   }
