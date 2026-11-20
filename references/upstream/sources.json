@@ -16,10 +16,10 @@
     "builtin": {
       "description": "The /security-review prompt bundled in Claude Code. Proprietary: its text is never stored here, only a SHA-256 of the normalized body.",
       "npm_package": "@anthropic-ai/claude-code-linux-x64",
-      "version": "2.1.284",
-      "body_sha256": "a781b24682c1b58a326c7bae854f66cdc149823f03cfe3fa85100f4093f23ef8",
+      "version": "2.1.329",
+      "body_sha256": "ad7f5a4b09b4fd2c72d2640df054bcc32b3383284c4f2be8d73d79c886019dd4",
       "matches_public": false,
-      "retrieved": "2026-09-28",
+      "retrieved": "2026-11-20",
       "known_differences_from_public": [
         "Observed in Claude Code 2.1.283 and 2.1.284. The DIFF CONTENT step reviews committed changes since the merge base with origin/HEAD only (three-dot diff); the public copy's --merge-base form also includes uncommitted working-tree changes.",
         "Outside the hashed body: allowed-tools also grants PowerShell forms of the same read-only git commands, and the command refuses to run outside a git repository."
