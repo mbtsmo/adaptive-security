@@ -1,0 +1,16 @@
+{
+  "name": "adaptive-security",
+  "owner": {
+    "name": "mbtsmo"
+  },
+  "metadata": {
+    "description": "Adaptive security skill for Claude Code: backup-first security review, recurring checks and verified remediation."
+  },
+  "plugins": [
+    {
+      "name": "adaptive-security",
+      "source": "./",
+      "description": "Backup-first security review, recurring checks and verified remediation for authorized websites and applications."
+    }
+  ]
+}

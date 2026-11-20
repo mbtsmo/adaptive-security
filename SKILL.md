@@ -1,6 +1,6 @@
 ---
 name: adaptive-security
-description: Establish and operate a backup-first, self-improving security testing and remediation programme for authorized websites and applications. Use for recurring security maintenance, threat-driven testing, and verified self-healing workflows.
+description: Establish and operate a backup-first, self-improving security testing and remediation programme for authorized websites and applications. Runs Anthropic's /security-review for change review and tracks Anthropic's updates to it. Use for recurring security maintenance, security reviews of changes, threat-driven testing, and verified self-healing workflows.
 ---
 
 # Adaptive security
@@ -63,6 +63,8 @@ affected coverage when code, configuration, identity or deployed artifacts chang
    only within established non-disruptive bounds. Active exploit tests require
    isolated local/staging targets, synthetic identities/data and mocked external
    side effects. Never infer authenticated coverage from anonymous rejection.
+   Run the /security-review pass in references/SECURITY-REVIEW.md for each
+   security-sensitive change and at the weekly review.
 5. Prioritize reachable exploitation and high-impact exposure. For a confirmed
    defect, prepare a reproducible regression or document why that is infeasible.
    Before changing affected source, configuration, dependencies or resources,
@@ -91,8 +93,13 @@ affected coverage when code, configuration, identity or deployed artifacts chang
 ## Improve on evidence
 
 Use references/SECURITY-REVIEW.md for change review, finding triage, threat-model
-updates and patch review. It adapts Anthropic's public methods to this programme's
-broader scope, existing authority and available tools; no Claude account is needed.
+updates and patch review. It runs Anthropic's /security-review (the Claude Code
+built-in where available, otherwise the vendored MIT copy) under this programme's
+precedence rules, and adapts Anthropic's other public methods to its broader
+scope, existing authority and available tools. The vendored path needs no Claude
+account. In Claude Code the built-in carries Anthropic's current version; the
+vendored copy changes only through the Upstream tracking procedure, never by
+following a fresh download at run time.
 
 Maintain a threat-to-test register linking each relevant threat or discovered
 blind spot to applicability, test IDs, results, unresolved gaps and next action.
@@ -102,9 +109,10 @@ new test count or clean dependency audit is not complete security coverage.
 
 Each week complete the highest-risk feasible coverage improvement, continuing
 independent work around blockers. Each month reassess standards applicability,
-threat model, testing methods and source coverage. Track regression escapes,
-missed feeds, stale checks, restore failures and false negatives. Retire tests
-only with a recorded rationale; do not weaken controls to get a passing report.
+threat model, testing methods, source coverage and upstream /security-review
+currency. Track regression escapes, missed feeds, stale checks, restore failures
+and false negatives. Retire tests only with a recorded rationale; do not weaken
+controls to get a passing report.
 Changes to the programme itself require backup, review of the diff, validation
 and versioning. Do not silently rewrite this installed skill or broaden scope;
 propose reusable skill revisions supported by evidence, and apply them when

@@ -1,0 +1,125 @@
+name: Upstream /security-review sync
+
+# Detects changes Anthropic makes to /security-review (the published MIT command
+# and the copy bundled in Claude Code) and proposes them for review. See
+# "Upstream tracking" in references/SECURITY-REVIEW.md. Claude Code is only
+# downloaded and read; it is never executed or reproduced in logs.
+
+on:
+  schedule:
+    - cron: "23 7 * * *" # daily, 07:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: upstream-security-review-sync
+  cancel-in-progress: false
+
+env:
+  BRANCH: upstream-sync/security-review
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Test sync script
+        run: python3 -m unittest discover -s scripts
+
+      - name: Verify vendored copy
+        run: python3 scripts/upstream_sync.py verify
+
+      - name: Check upstream
+        id: check
+        run: |
+          set +e
+          python3 scripts/upstream_sync.py check --source all --apply --summary "$RUNNER_TEMP/summary.md"
+          rc=$?
+          set -e
+          case "$rc" in
+            0) echo "changed=false" >> "$GITHUB_OUTPUT" ;;
+            2) echo "changed=true" >> "$GITHUB_OUTPUT" ;;
+            *) exit "$rc" ;;
+          esac
+
+      - name: Propose update
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add references/upstream
+          git commit -q -m "Sync Anthropic /security-review upstream"
+          tree=$(git rev-parse HEAD:references/upstream)
+          {
+            echo "The scheduled upstream check found a change to Anthropic's \`/security-review\`."
+            echo
+            cat "$RUNNER_TEMP/summary.md"
+            echo
+            echo "## Before merging"
+            echo
+            echo "Follow **Upstream tracking → Adopting an update** in \`references/SECURITY-REVIEW.md\`:"
+            echo "review the upstream change, update the precedence table in this PR, and hold anything"
+            echo "that would widen authority or weaken the skill's safety rules. Closing without merging"
+            echo "declines this upstream state."
+            echo
+            echo "Upstream fingerprint: \`$tree\`"
+          } > "$RUNNER_TEMP/body.md"
+
+          # Never overwrite an open PR: it may already carry review edits.
+          pr=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$pr" ]; then
+            existing=$(gh pr view "$pr" --json body,comments --jq '.body, .comments[].body')
+            if grep -qF "$tree" <<< "$existing"; then
+              echo "Open PR #$pr already carries this upstream state."
+            else
+              gh pr comment "$pr" --body-file "$RUNNER_TEMP/body.md"
+              echo "Commented on open PR #$pr with a newer upstream state; branch left unchanged."
+            fi
+            exit 0
+          fi
+
+          if git fetch -q origin "$BRANCH" 2>/dev/null \
+              && [ "$(git rev-parse FETCH_HEAD:references/upstream)" = "$tree" ]; then
+            echo "This upstream state is already on $BRANCH (declined, or awaiting review via issue)."
+            exit 0
+          fi
+
+          git push -q --force origin "$BRANCH"
+          if ! gh pr create --base "$BASE" --head "$BRANCH" \
+              --title "Sync Anthropic /security-review upstream" --body-file "$RUNNER_TEMP/body.md"; then
+            {
+              echo "A pull request could not be opened. Enable **Settings → Actions → General →"
+              echo "Workflow permissions → Allow GitHub Actions to create and approve pull requests**,"
+              echo "or review the branch directly:"
+              echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/$BASE...$BRANCH"
+              echo
+              cat "$RUNNER_TEMP/body.md"
+            } > "$RUNNER_TEMP/issue.md"
+            gh issue create --title "Upstream /security-review changed: review $BRANCH" \
+              --body-file "$RUNNER_TEMP/issue.md"
+          fi
+
+      - name: Report failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Upstream /security-review sync is failing"
+          body="Run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID failed. Until a run passes, adaptive-security treats upstream /security-review currency as blocked, not current."
+          n=$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')
+          if [ -n "$n" ]; then
+            gh issue comment "$n" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi
